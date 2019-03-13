@@ -11,7 +11,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <form novalidate action="/reg/" method="post" class="form-horizontal reg-form" enctype="multipart/form-data">
+            <form novalidate action="/reg/" method="post" class="form-horizontal reg-form"
+                  enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="form-group">
@@ -104,18 +105,18 @@
             processData: false,
             contentType: false,
             data: formData,
-            success:function (data) {
-                if (data.status){
+            success: function (data) {
+                if (data.status) {
                     // 有错误就展示错误
                     // console.log(data.msg);
                     // 将报错信息填写到页面上
-                    $.each(data.msg, function (k,v) {
+                    $.each(data.msg, function (k, v) {
                         // console.log("id_"+k, v[0]);
                         // console.log($("#id_"+k));
-                        $("#id_"+k).next("span").text(v[0]).parent().parent().addClass("has-error");
+                        $("#id_" + k).next("span").text(v[0]).parent().parent().addClass("has-error");
                     })
 
-                }else {
+                } else {
                     // 没有错误就跳转到指定页面
                     location.href = data.msg;
                 }
@@ -126,6 +127,26 @@
     // 将所有的input框绑定获取焦点的事件，将所有的错误信息清空
     $("form input").focus(function () {
         $(this).next().text("").parent().parent().removeClass("has-error");
+    });
+    //给username input框绑定一个失去焦点事件,失去焦点之后及校验用户名是否已注册
+    $("#id_username").blur(function () {
+        //取到用户填写的值
+        var username = $(this).val();
+        //发请求
+        $.ajax({
+            url:"/check_username_exist/",
+            type: "get",
+            data:username,
+            success:function (data) {
+                if(data.status){
+                    //用户名已经被注册
+                $("#id_username").next().text(data.msg).parent().parent().addClass("has-error");
+                }else {
+                    //不做操作
+                }
+
+            }
+        })
     })
 </script>
 </body>

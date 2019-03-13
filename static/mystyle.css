@@ -25,3 +25,21 @@
 .dispaly{
     display: none;
 }
+
+/*博客主页面 头像样式*/
+.author-img{
+    width: 80px;
+    height: 80px;
+}
+.article-footer span{
+    margin-right: 30px;
+}
+
+.article-footer{
+    margin-top: 10px;
+    /*color: red;*/
+}
+
+/*.article-all{*/
+    /*margin-top: 50px;*/
+/*}*/

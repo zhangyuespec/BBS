@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from blog import views
+from django.views.static import serve #meida路径需要导入的包
+from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -23,4 +25,11 @@ urlpatterns = [
     url(r'^reg/', views.register),
     url(r'^index/', views.index),
     url(r'^/pc-geetest/register', views.get_geetest),
+    # 用来校验用户名是否已被注册的视图
+    url(r"^check_username_exist/",views.check_username_exist),
+    url(r'^logout/',views.logout),
+    url(r"^login_test",views.login_test),
+
+    # media相关的路由
+    url(r"^media/(?P<path>.*)$",serve,{"document_root":settings.MEDIA_ROOT}),
 ]

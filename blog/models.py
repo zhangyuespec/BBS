@@ -19,6 +19,10 @@ class UserInfo(AbstractUser):
     def __str__(self):
         return self.username
 
+    class Meta:
+        verbose_name = "用户信息"
+        verbose_name_plural = verbose_name
+
 
 class Blog(models.Model):
     """
@@ -31,6 +35,9 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+    class Meta:
+        verbose_name = "博客信息"
+        verbose_name_plural = verbose_name
 
 
 class Category(models.Model):
@@ -44,6 +51,10 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "文章分类"
+        verbose_name_plural = verbose_name
+
 
 class Tag(models.Model):
     """
@@ -56,6 +67,10 @@ class Tag(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "标签"
+        verbose_name_plural = verbose_name
+
 
 class Article(models.Model):
     """
@@ -65,6 +80,10 @@ class Article(models.Model):
     title = models.CharField(max_length=50)  # 文章标题
     desc = models.CharField(max_length=255)  # 文章描述
     create_time = models.DateTimeField()  # 创建时间
+
+    comment_count = models.IntegerField(verbose_name="评论数",default=0)
+    up_count = models.IntegerField(verbose_name="点赞数",default=0)
+    down_count = models.IntegerField(verbose_name="踩数",default=0)
 
     category = models.ForeignKey(to="Category", to_field="nid", null=True)
     user = models.ForeignKey(to="UserInfo", to_field="nid")
@@ -77,6 +96,10 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "文章"
+        verbose_name_plural = verbose_name
+
 
 class ArticleDetail(models.Model):
     """
@@ -85,6 +108,10 @@ class ArticleDetail(models.Model):
     nid = models.AutoField(primary_key=True)
     content = models.TextField()
     article = models.OneToOneField(to="Article", to_field="nid")
+
+    class Meta:
+        verbose_name = "文章详情"
+        verbose_name_plural = verbose_name
 
 
 class Article2Tag(models.Model):
@@ -97,6 +124,8 @@ class Article2Tag(models.Model):
 
     class Meta:
         unique_together = (("article", "tag"),)
+        verbose_name = "文章-标签"
+        verbose_name_plural = verbose_name
 
 
 class ArticleUpDown(models.Model):
@@ -110,6 +139,8 @@ class ArticleUpDown(models.Model):
 
     class Meta:
         unique_together = (("article", "user"),)
+        verbose_name = "点赞"
+        verbose_name_plural = verbose_name
 
 
 class Comment(models.Model):
@@ -125,3 +156,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+    class Meta:
+        verbose_name = "评论"
+        verbose_name_plural = verbose_name

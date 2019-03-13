@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'untitled2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "bbs",
+        'NAME': "bbs_0",
         "USER":"root",
         "PASSWORD":"123456",
         "PORT":3306,
@@ -127,3 +127,7 @@ STATICFILES_DIRS = [
 
 # 告诉Django项目用哪张表做认证
 AUTH_USER_MODEL = 'blog.UserInfo'
+
+# 在Django里面,用户上传的都叫media文件,这样才能看到用户头像
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR,"media")

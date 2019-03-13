@@ -9,7 +9,43 @@ from blog import forms, models
 VALID_CODE = ""
 
 
-# # 自己生成验证码的登录
+# 自己生成验证码的登录
+def login(request):
+    # if request.is_ajax():  # 如果是AJAX请求
+    if request.method == "POST":
+        # 初始化一个给AJAX返回的数据
+        ret = {"status": 0, "msg": ""}
+        # 从提交过来的数据中 取到用户名和密码
+        username = request.POST.get("username")
+        pwd = request.POST.get("password")
+        valid_code = request.POST.get("valid_code")  # 获取用户填写的验证码
+        print(valid_code)
+        print("用户输入的验证码".center(120, "="))
+        # if valid_code and valid_code.upper() == request.session.get("valid_code", "").upper():
+        #     # 验证码正确
+        #     # 利用auth模块做用户名和密码的校验
+        user = auth.authenticate(username=username, password=pwd)
+        if user:
+            # 用户名密码正确
+            # 给用户做登录
+            auth.login(request, user) # 将登录用户赋值给 request.user
+            ret["msg"] = "/index/"
+        else:
+            # 用户名密码错误
+            ret["status"] = 1
+            ret["msg"] = "用户名或密码错误！"
+        # else:
+        #     ret["status"] = 1
+        #     ret["msg"] = "验证码错误"
+
+        return JsonResponse(ret)
+    return render(request, "login.html")
+
+def logout(request):
+    auth.logout(request)
+    return redirect("/index/")
+
+# # 使用极验滑动验证码的登录:
 # def login(request):
 #     # if request.is_ajax():  # 如果是AJAX请求
 #     if request.method == "POST":
@@ -18,10 +54,21 @@ VALID_CODE = ""
 #         # 从提交过来的数据中 取到用户名和密码
 #         username = request.POST.get("username")
 #         pwd = request.POST.get("password")
-#         valid_code = request.POST.get("valid_code")  # 获取用户填写的验证码
-#         print(valid_code)
-#         print("用户输入的验证码".center(120, "="))
-#         if valid_code and valid_code.upper() == request.session.get("valid_code", "").upper():
+#         # valid_code = request.POST.get("valid_code")  # 获取用户填写的验证码
+#         # print(valid_code)
+#         # print("用户输入的验证码".center(120, "="))
+#         # 获取极验验证码相关参数
+#         gt = GeetestLib(pc_geetest_id, pc_geetest_key)
+#         challenge = request.POST.get(gt.FN_CHALLENGE, '')
+#         validate = request.POST.get(gt.FN_VALIDATE, '')
+#         seccode = request.POST.get(gt.FN_SECCODE, '')
+#         status = request.session[gt.GT_STATUS_SESSION_KEY]
+#         user_id = request.session["user_id"]
+#         if status:
+#             result = gt.success_validate(challenge, validate, seccode, user_id)
+#         else:
+#             result = gt.failback_validate(challenge, validate, seccode)
+#         if result:
 #             # 验证码正确
 #             # 利用auth模块做用户名和密码的校验
 #             user = auth.authenticate(username=username, password=pwd)
@@ -39,50 +86,7 @@ VALID_CODE = ""
 #             ret["msg"] = "验证码错误"
 #
 #         return JsonResponse(ret)
-#     return render(request, "login.html")
-
-# 使用极验滑动验证码的登录:
-def login(request):
-    # if request.is_ajax():  # 如果是AJAX请求
-    if request.method == "POST":
-        # 初始化一个给AJAX返回的数据
-        ret = {"status": 0, "msg": ""}
-        # 从提交过来的数据中 取到用户名和密码
-        username = request.POST.get("username")
-        pwd = request.POST.get("password")
-        # valid_code = request.POST.get("valid_code")  # 获取用户填写的验证码
-        # print(valid_code)
-        # print("用户输入的验证码".center(120, "="))
-        # 获取极验验证码相关参数
-        gt = GeetestLib(pc_geetest_id, pc_geetest_key)
-        challenge = request.POST.get(gt.FN_CHALLENGE, '')
-        validate = request.POST.get(gt.FN_VALIDATE, '')
-        seccode = request.POST.get(gt.FN_SECCODE, '')
-        status = request.session[gt.GT_STATUS_SESSION_KEY]
-        user_id = request.session["user_id"]
-        if status:
-            result = gt.success_validate(challenge, validate, seccode, user_id)
-        else:
-            result = gt.failback_validate(challenge, validate, seccode)
-        if result:
-            # 验证码正确
-            # 利用auth模块做用户名和密码的校验
-            user = auth.authenticate(username=username, password=pwd)
-            if user:
-                # 用户名密码正确
-                # 给用户做登录
-                auth.login(request, user)
-                ret["msg"] = "/index/"
-            else:
-                # 用户名密码错误
-                ret["status"] = 1
-                ret["msg"] = "用户名或密码错误！"
-        else:
-            ret["status"] = 1
-            ret["msg"] = "验证码错误"
-
-        return JsonResponse(ret)
-    return render(request, "login2.html")
+#     return render(request, "login2.html")
 
 
 # 获取验证码图片的视图
@@ -162,7 +166,10 @@ def get_valid_img(request):
 
 
 def index(request):
-    return render(request, "index.html")
+    # 查询所有的文章列表
+    article = models.Article.objects.all()
+
+    return render(request, "index.html",{"article_list":article})
 
 
 # 获取极验验证码
@@ -185,6 +192,7 @@ from blog import forms
 
 # 注册的视图函数
 def register(request):
+    form_obj = forms.RegForm()
     if request.method == "POST":
         ret = {"status": 0, "msg": ""}
         form_obj = forms.RegForm(request.POST)
@@ -192,10 +200,19 @@ def register(request):
         # 帮我做校验
         if form_obj.is_valid():
             # 校验通过，去数据库创建一个新的用户
+            print(111111)
+            print(form_obj.cleaned_data)
             form_obj.cleaned_data.pop("re_password")
+            print(66666666)
+            # form_obj.cleaned_data.pop("csrfmiddlewaretoken")
+            print(form_obj.cleaned_data)
+            print(22222222222)
             avatar_img = request.FILES.get("avatar")
+            print(33333333)
             models.UserInfo.objects.create_user(**form_obj.cleaned_data, avatar=avatar_img)
+            print(44444444)
             ret["msg"] = "/index/"
+            print(5555555555)
             return JsonResponse(ret)
         else:
             print(form_obj.errors)
@@ -205,6 +222,33 @@ def register(request):
             print("=" * 120)
             return JsonResponse(ret)
     # 生成一个form对象
-    form_obj = forms.RegForm()
+    # form_obj = forms.RegForm()
+    print(222222222)
     print(form_obj.fields)
     return render(request, "register.html", {"form_obj": form_obj})
+
+def check_username_exist(request):
+    ret={"status":0,"msg":""}
+    username=request.GET.get("username")
+    is_exist = models.UserInfo.objects.filter(username=username)
+    if is_exist:
+        ret["status"] = 1
+        ret["msg"] = "用户名已被注册"
+
+    return JsonResponse(ret)
+
+
+def login_test(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = models.UserInfo.objects.filter(username=username,password=password)
+        print(username,password,user)
+        if user:
+            # 登录成功
+            print(11111)
+            return redirect("/index")
+        else:
+            print(22222)
+            return redirect("/login_test")
+    return render(request,"login_test.html")
