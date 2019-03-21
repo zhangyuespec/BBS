@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>index</title>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/mystyle.css">
 </head>
 <body>
@@ -84,23 +85,34 @@
                 <div class="article-list">
                     {% for foo in article_list %}
                         <div class="article">
-                            <h3>{{ foo.title }}</h3>
+                            <h3><a href="">{{ foo.title }}</a></h3>
                             <div class="media">
                                 <div class="media-left media-middle">
-                                    <a href="#">
-                                        <img class="media-object author-img img-circle" src="/media/{{ foo.user.avatar }}" alt="头像">
+                                    <label for="id_span"><a
+                                            href="/blog/{{ foo.user.username }}" id="id_span">
+                                        <img class="media-object author-img img-circle"
+                                             src="/media/{{ foo.user.avatar }}" alt="头像">
                                     </a>
+                                    </label>
                                 </div>
                                 <div class="media-body">
                                     <p>{{ foo.desc }}</p>
                                 </div>
                             </div>
-                        <div class="article-footer">
-                            <span><a href="">{{ foo.user.username }}</a></span>发布于
-                            <span>{{ foo.create_time | date:"Y-m-d H:i:s" }}</span>
-                            <span class="glyphicon glyphicon-comment">评论({{ foo.comment_set.all.count }})</span>
-                            <span class="glyphicon glyphicon-thumbs-up">点赞({{ foo.articleupdown_set.all.count }})</span>
-                        </div>
+                            <div class="article-footer">
+                                <span><a
+                                        href="/blog/{{ foo.user.username }}"
+                                        id="id_span">{{ foo.user.username }}</a></span>发布于
+                                <span>{{ foo.create_time | date:"Y-m-d H:i:s" }}</span>
+                                {#                            <span class="glyphicon glyphicon-comment">评论({{ foo.comment_set.all.count }})</span>#}
+                                {#                            <span class="glyphicon glyphicon-thumbs-up">点赞({{ foo.articleupdown_set.all.count }})</span>#}
+                                <i class="fa fa-comments "
+                                   aria-hidden="true"><span>评论({{ foo.comment_set.all.count }})</span></i>
+                                <i class="fa fa-thumbs-o-up"
+                                   aria-hidden="true"><span>点赞({{ foo.articleupdown_set.all.count }})</span></i>
+                            </div>
+                            <hr color="red">
+                            {# 分割线 #}
                         </div>
                     {% endfor %}
 

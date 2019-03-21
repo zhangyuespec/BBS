@@ -109,6 +109,9 @@ class ArticleDetail(models.Model):
     content = models.TextField()
     article = models.OneToOneField(to="Article", to_field="nid")
 
+    def __str__(self):
+        return self.article.title
+
     class Meta:
         verbose_name = "文章详情"
         verbose_name_plural = verbose_name
@@ -122,8 +125,11 @@ class Article2Tag(models.Model):
     article = models.ForeignKey(to="Article", to_field="nid")
     tag = models.ForeignKey(to="Tag", to_field="nid")
 
+    def __str__(self):
+        return "{}---{}".format(self.article.title,self.tag.title)
+
     class Meta:
-        unique_together = (("article", "tag"),)
+        unique_together = (("article", "tag"),) # 联合唯一
         verbose_name = "文章-标签"
         verbose_name_plural = verbose_name
 
@@ -139,6 +145,7 @@ class ArticleUpDown(models.Model):
 
     class Meta:
         unique_together = (("article", "user"),)
+        #　联合唯一，为什么不加入ｉｓ＿ｕｐ三个字段一起联合唯一，因为如果这样一个用户对一骗文章既可以点赞也可以踩了，业务逻辑就不对了
         verbose_name = "点赞"
         verbose_name_plural = verbose_name
 

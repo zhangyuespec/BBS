@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ username }}的个人博客</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/mystyle.css">
+    <link rel="stylesheet" href="/static/theme/{{ blog.theme }}">
+    <script src="/static/jquery-3.3.1.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="header">
+    <p>{{ blog.title }}</p>
+</div>
+<div class="container">
+    <div class="col-md-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading">文章分类</div>
+            {% for category in category_list %}
+                <div class="panel-body">
+                    <p>{{ category.title }}({{ category.article_set.all.count }})</p>
+
+                </div>
+            {% endfor %}
+
+
+        </div>
+        <div class="panel panel-warning">
+            <div class="panel-heading">文章标签</div>
+            {% for tag in tag_list %}
+                <div class="panel-body">
+                    <p>{{ tag.title }}({{ tag.c }})</p>
+
+                </div>
+            {% endfor %}
+
+
+        </div>
+        <div class="panel panel-warning">
+            <div class="panel-heading">日期归档</div>
+            {% for tag in archive_list %}
+                <div class="panel-body">
+                    <p>{{ tag.archive_ym }}({{ tag.c }})</p>
+
+                </div>
+            {% endfor %}
+
+
+        </div>
+    </div>
+    <div class="col-md-8">
+        {% block page-main %}
+
+        {% endblock %}
+        <!--个人博客列表 开始-->
+
+        <!--个人博客列表 结束-->
+    </div>
+</div>
+
+</body>
+</html>

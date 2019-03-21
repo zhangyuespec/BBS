@@ -18,6 +18,7 @@ from django.contrib import admin
 from blog import views
 from django.views.static import serve #meida路径需要导入的包
 from django.conf import settings
+from blog import urls
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -32,4 +33,8 @@ urlpatterns = [
 
     # media相关的路由
     url(r"^media/(?P<path>.*)$",serve,{"document_root":settings.MEDIA_ROOT}),
+
+    # 所有以blog开头的url都交给app下面的urls.py文件处理
+    url(r"^blog/",include(urls)),
+    #url(r"^(\w+)/article/(\d+)/$",views.article_detail), # 文章详情
 ]
